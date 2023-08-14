@@ -1,49 +1,5 @@
-const cardapio = [
-  { codigo: "cafe", descricao: "Café", valor: 3, status: "principal" },
-  {
-    codigo: "chantily",
-    descricao: "Chantily (extra do Café)",
-    valor: 1.5,
-    status: "extraCafe",
-  },
-  {
-    codigo: "suco",
-    descricao: "Suco Natural",
-    valor: 6.2,
-    status: "principal",
-  },
-  {
-    codigo: "sanduiche",
-    descricao: "Sanduíche",
-    valor: 6.5,
-    status: "principal",
-  },
-  {
-    codigo: "queijo",
-    descricao: "Queijo (extra do Sanduíche)",
-    valor: 2,
-    status: "extraSand",
-  },
-  { codigo: "salgado", descricao: "Salgado", valor: 7.25, status: "principal" },
-  {
-    codigo: "combo1",
-    descricao: "1 Suco e 1 Sanduíche",
-    valor: 9.5,
-    status: "secundario",
-  },
-  {
-    codigo: "combo1",
-    descricao: "1 Café e 1 Sanduíche",
-    valor: 7.5,
-    status: "secundario",
-  },
-];
+import { cardapio } from "./cardapio.js";
 
-const pagamento = [
-  { metodo: "dinheiro", taxa: 0.95 },
-  { metodo: "debito", taxa: 1 },
-  { metodo: "credito", taxa: 1.03 },
-];
 
 class CaixaDaLanchonete {
   // Método criado para fazer verificações em relações as regras definidas no escopo do desafio
@@ -176,5 +132,6 @@ class CaixaDaLanchonete {
 
 const novoPedido = new CaixaDaLanchonete().calcularValorDaCompra("credito", ['combo1,1','cafe,2']);
 console.log(novoPedido);
+// OUTPUT: R$ 15,96
 
 export { CaixaDaLanchonete };
