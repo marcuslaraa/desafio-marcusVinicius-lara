@@ -46,6 +46,7 @@ const pagamento = [
 ];
 
 class CaixaDaLanchonete {
+  // Método criado para fazer verificações em relações as regras definidas no escopo do desafio
   verificaCompatibilidade(infoPedido, quantidades, codigos, metodoDePagamento) {
     let validaCodigo = true;
 
@@ -53,12 +54,23 @@ class CaixaDaLanchonete {
       return cod.codigo;
     });
 
-    console.log(infoPedidoCodigos);
-
     const infoPedidoStatus = infoPedido.map((stt) => {
       return stt.status;
     });
 
+    // validação de pagamento
+    if (
+      metodoDePagamento.includes("debito") ||
+      metodoDePagamento.includes("credito") ||
+      metodoDePagamento.includes("dinheiro")
+    ) {
+      validaCodigo = true;
+    } else {
+      validaCodigo = false;
+      console.log("Forma de pagamento inválida!");
+    }
+
+    // Validação de input(pedido)
     for (const codigo of codigos) {
       if (codigo === "") {
         validaCodigo = false;
@@ -67,6 +79,7 @@ class CaixaDaLanchonete {
       }
     }
 
+    // Validação de input(Iem não existe)
     for (const pedido of infoPedido) {
       if (pedido == undefined) {
         validaCodigo = false;
@@ -75,6 +88,7 @@ class CaixaDaLanchonete {
       }
     }
 
+    // Validação da quantidade dos pedidos > 0
     for (const quantidade of quantidades) {
       if (quantidade === 0) {
         validaCodigo = false;
@@ -83,6 +97,7 @@ class CaixaDaLanchonete {
       }
     }
 
+    // condição criada com o objetivo de realizar testes de compatabilidade entre os inputs
     if (
       infoPedidoStatus.includes("extraCafe") &&
       !infoPedidoCodigos.includes("cafe")
@@ -99,45 +114,67 @@ class CaixaDaLanchonete {
       console.log("Item extra não pode ser pedido sem o principal");
     }
 
-    if (
-      metodoDePagamento.includes("debito") ||
-      metodoDePagamento.includes("credito") ||
-      metodoDePagamento.includes("dinheiro")
-    ) {
-      validaCodigo = true;
-    } else {
-      validaCodigo = false;
-      console.log("Forma de pagamento inválida!");
-    }
-
     return validaCodigo;
   }
 
   calcularValorDaCompra(metodoDePagamento, itens) {
+    // criando array somente com o codigo ['cafe']
     const codigos = itens.map((item) => {
       return item.split(",")[0];
     });
 
+    // criando array somente com a quantidade e convertendo de string para number [1]
     const quantidades = itens.map((quantidade) => {
       return Number(quantidade.split(",")[1]);
     });
 
+    // buscando objetos(cardapio) através do codigo fornecido no input.
     const infoPedido = codigos.map((item) => {
       const itemDoCardapio = cardapio.find((c) => c.codigo === item);
       return itemDoCardapio;
     });
 
-    const validacao = this.verificaCompatibilidade(infoPedido, quantidades, codigos, metodoDePagamento);
-    console.log(validacao)
+    // Variavel de validação referente o metodo verificaCompatibilidade()
+    const validacao = this.verificaCompatibilidade(
+      infoPedido,
+      quantidades,
+      codigos,
+      metodoDePagamento
+    );
 
-    return ""
+    // Condição criada para ser executada somente se o imput atender a todas as regras necessarias
+    if (validacao) {
+      const valores = infoPedido.map((val) => {
+        return val.valor;
+      });
+
+      const resultado = quantidades.map((qtde, ind) => qtde * valores[ind]);
+      let resultadoFinal = resultado.reduce((acum, valInicial) => {
+        return acum + valInicial;
+      });
+
+      if (metodoDePagamento === "credito") {
+        resultadoFinal *= 1.03;
+      } else if (metodoDePagamento === "dinheiro") {
+        resultadoFinal *= 0.95;
+      }
+
+      // Defindo o numero de casas decimais
+      resultadoFinal = resultadoFinal.toFixed(2);
+      //  convertendo o valor em moeda(real)
+      const conversor = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+
+      resultadoFinal = conversor.format(resultadoFinal);
+
+      return resultadoFinal;
+    }
   }
 }
 
-const novoPedido = new CaixaDaLanchonete().calcularValorDaCompra("debito", [
-  "chantily,1",
-  "cafe,1",
-]);
+const novoPedido = new CaixaDaLanchonete().calcularValorDaCompra("credito", ['combo1,1','cafe,2']);
 console.log(novoPedido);
 
 export { CaixaDaLanchonete };
